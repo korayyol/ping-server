@@ -7,6 +7,7 @@ const TELEGRAM_TOKEN = process.env.TELEGRAM_TOKEN;
 const CHAT_ID = process.env.CHAT_ID;
 
 let lastPing = Date.now();
+let firstConnectionReported = false;  // New flag to detect first successful ping
 
 // Ping alma kontrolü (her dakika)
 setInterval(() => {
@@ -21,6 +22,12 @@ setInterval(() => {
 app.post('/ping', (req, res) => {
   lastPing = Date.now();
   console.log("Ping alındı:", req.body);
+
+  if (!firstConnectionReported) {
+    sendTelegram("✅ Cihaz bağlantı başarılı (ilk ping alındı).");
+    firstConnectionReported = true;
+  }
+
   res.send("ok");
 });
 
@@ -44,4 +51,3 @@ const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`Sunucu ${PORT} portunda çalışıyor.`);
 });
-
